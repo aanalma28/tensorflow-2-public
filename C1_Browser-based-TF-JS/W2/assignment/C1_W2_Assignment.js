@@ -13,24 +13,18 @@ function getModel() {
     // should have 10 units and a softmax activation function. You are free to use as
     // many layers, filters, and neurons as you like.  
     // HINT: Take a look at the MNIST example.
-    model = tf.sequential();
-    
-    model.add(tf.layers.conv2d({inputShape: [28,28,1], kernelSize: 3, filters: 8, activation: 'relu'}))
-    model.add(tf.layers.maxPooling2d({poolSize: [2,2]}))
-    model.add(tf.layers.conv2d({filters: 16, kernelSize: 3, activation: 'relu'}))
-    model.add(tf.layers.maxPooling2d({poolSize: [2,2]}))
-    model.add(tf.layers.flatten())
-    model.add(tf.layers.dense({units: 512, activation: 'relu'}))
-    model.add(tf.layers.dense({units: 10, activation: 'softmax'}))
-    
-    
+    model = tf.sequential();    
+    model.add(tf.layers.conv2d({inputShape: [28, 28, 1], kernelSize: 3, filters: 16, activation: 'relu'}));
+	model.add(tf.layers.maxPooling2d({poolSize: [2, 2]}));
+	model.add(tf.layers.conv2d({filters: 16, kernelSize: 3, activation: 'relu'}));
+	model.add(tf.layers.flatten());
+	model.add(tf.layers.dense({units: 128, activation: 'relu'}));
+	model.add(tf.layers.dense({units: 10, activation: 'softmax'}));
+
+	        
     // Compile the model using the categoricalCrossentropy loss,
     // the tf.train.adam() optimizer, and `acc` for your metrics.
-    model.compile({
-        optimizer: tf.train.adam(),
-        loss: 'categoricalCrossentropy',
-        metrics: ['accuracy']
-    });
+    model.compile({optimizer: tf.train.adam(0.001), loss: 'categoricalCrossentropy', metrics: ['acc']});
     
     return model;
 }
@@ -81,7 +75,7 @@ async function train(model, data) {
     return model.fit(trainXs, trainYs, {
         batchSize: BATCH_SIZE,
         validationData: [testXs, testYs],
-        epochs: 10,
+        epochs: 20,
         shuffle: true,
         callbacks: fitCallbacks
     });
@@ -116,7 +110,7 @@ function save() {
     var tensor = resized.expandDims(0);
     
     var prediction = model.predict(tensor);
-    var pIndex = tf.argMax(prediction, 1).dataSync();
+        var pIndex = tf.argMax(prediction, 1).dataSync();
     
     var classNames = ["T-shirt/top", "Trouser", "Pullover", 
                       "Dress", "Coat", "Sandal", "Shirt",
